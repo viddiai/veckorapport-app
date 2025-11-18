@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { WeeklyReport, Project, ReportFormData } from "../types";
 import { generateId, getWeekDates } from '../utils/dateHelpers';
 import { Button } from './Button';
