@@ -5,17 +5,19 @@ import { Button } from './Button';
 import { Input } from './Input';
 
 interface CreateProjectProps {
+  existingProject?: Project;
   onSave: (project: Project) => void;
   onCancel: () => void;
 }
 
 export const CreateProject: React.FC<CreateProjectProps> = ({
+  existingProject,
   onSave,
   onCancel,
 }) => {
-  const [name, setName] = useState('');
-  const [customerName, setCustomerName] = useState('');
-  const [logoUrl, setLogoUrl] = useState('');
+  const [name, setName] = useState(existingProject?.name || '');
+  const [customerName, setCustomerName] = useState(existingProject?.customerName || '');
+  const [logoUrl, setLogoUrl] = useState(existingProject?.logoUrl || '');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,11 +35,11 @@ export const CreateProject: React.FC<CreateProjectProps> = ({
     e.preventDefault();
 
     const project: Project = {
-      id: generateId(),
+      id: existingProject?.id || generateId(),
       name,
       customerName,
       logoUrl,
-      createdAt: new Date().toISOString(),
+      createdAt: existingProject?.createdAt || new Date().toISOString(),
     };
 
     onSave(project);
@@ -48,7 +50,7 @@ export const CreateProject: React.FC<CreateProjectProps> = ({
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-sm p-8">
           <h2 className="text-2xl font-semibold text-apple-gray-900 mb-6">
-            Nytt Projekt
+            {existingProject ? 'Redigera Projekt' : 'Nytt Projekt'}
           </h2>
 
           <form onSubmit={handleSubmit}>
@@ -108,7 +110,7 @@ export const CreateProject: React.FC<CreateProjectProps> = ({
 
             <div className="flex gap-3 pt-4">
               <Button type="submit" className="flex-1">
-                Skapa Projekt
+                {existingProject ? 'Spara Ändringar' : 'Skapa Projekt'}
               </Button>
               <Button
                 type="button"

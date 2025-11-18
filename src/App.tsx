@@ -7,6 +7,7 @@ import {
   saveReport,
   getProject,
   getReport,
+  deleteProject,
 } from './utils/storage';
 import { ProjectList } from './components/ProjectList';
 import { CreateProject } from './components/CreateProject';
@@ -17,6 +18,7 @@ import { ReportView } from './components/ReportView';
 type View =
   | { type: 'projects' }
   | { type: 'create-project' }
+  | { type: 'edit-project'; projectId: string }
   | { type: 'project-detail'; projectId: string }
   | { type: 'create-report'; projectId: string }
   | { type: 'edit-report'; projectId: string; reportId: string }
@@ -45,6 +47,14 @@ function App() {
     setView({ type: 'project-detail', projectId: report.projectId });
   };
 
+  const handleDeleteProject = (projectId: string) => {
+    if (window.confirm('Är du säker på att du vill ta bort detta projekt? Alla rapporter kommer också tas bort.')) {
+      deleteProject(projectId);
+      loadProjects();
+      setView({ type: 'projects' });
+    }
+  };
+
   const renderView = () => {
     switch (view.type) {
       case 'projects':
@@ -65,6 +75,35 @@ function App() {
             onCancel={() => setView({ type: 'projects' })}
           />
         );
+
+      case 'edit-project': {
+        const project = getProject(view.projectId);
+        if (!project) {
+          return (
+            <div className="min-h-screen bg-apple-gray-50 p-6">
+              <div className="max-w-4xl mx-auto text-center">
+                <p className="text-apple-gray-700">Projekt hittades inte</p>
+                <button
+                  onClick={() => setView({ type: 'projects' })}
+                  className="mt-4 text-apple-blue hover:text-blue-600"
+                >
+                  Tillbaka till projekt
+                </button>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <CreateProject
+            existingProject={project}
+            onSave={handleSaveProject}
+            onCancel={() =>
+              setView({ type: 'project-detail', projectId: view.projectId })
+            }
+          />
+        );
+      }
 
       case 'project-detail': {
         const project = getProject(view.projectId);
@@ -100,6 +139,10 @@ function App() {
                 reportId,
               })
             }
+            onEditProject={() =>
+              setView({ type: 'edit-project', projectId: view.projectId })
+            }
+            onDeleteProject={() => handleDeleteProject(view.projectId)}
             onBack={() => setView({ type: 'projects' })}
           />
         );

@@ -10,6 +10,8 @@ interface ProjectDetailProps {
   reports: WeeklyReport[];
   onCreateReport: () => void;
   onViewReport: (reportId: string) => void;
+  onEditProject: () => void;
+  onDeleteProject: () => void;
   onBack: () => void;
 }
 
@@ -18,6 +20,8 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   reports,
   onCreateReport,
   onViewReport,
+  onEditProject,
+  onDeleteProject,
   onBack,
 }) => {
   const [selectedReport, setSelectedReport] = useState<WeeklyReport | null>(null);
@@ -67,19 +71,35 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
           </button>
 
           <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-            {project.logoUrl && (
-              <div className="mb-4 h-12 flex items-center">
-                <img
-                  src={project.logoUrl}
-                  alt={project.customerName}
-                  className="max-h-12 max-w-full object-contain"
-                />
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex-1">
+                {project.logoUrl && (
+                  <div className="mb-4 h-12 flex items-center">
+                    <img
+                      src={project.logoUrl}
+                      alt={project.customerName}
+                      className="max-h-12 max-w-full object-contain"
+                    />
+                  </div>
+                )}
+                <h1 className="text-2xl font-semibold text-apple-gray-900 mb-1">
+                  {project.name}
+                </h1>
+                <p className="text-apple-gray-500">{project.customerName}</p>
               </div>
-            )}
-            <h1 className="text-2xl font-semibold text-apple-gray-900 mb-1">
-              {project.name}
-            </h1>
-            <p className="text-apple-gray-500">{project.customerName}</p>
+              <div className="flex gap-2 ml-4">
+                <Button variant="secondary" onClick={onEditProject}>
+                  Redigera
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={onDeleteProject}
+                  className="!text-red-600 hover:!bg-red-50"
+                >
+                  Ta bort
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
